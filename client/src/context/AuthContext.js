@@ -34,8 +34,14 @@ export const AuthProvider = ({ children }) => {
       }));
     } catch (error) {
       console.error('Error fetching favorites:', error.response?.data || error.message);
-      // Don't clear user, just log error
     }
+  };
+
+  const updateFavorites = (updatedFavorites) => {
+    setUser((prev) => ({
+      ...prev,
+      favorites: updatedFavorites.map((blog) => blog._id),
+    }));
   };
 
   const login = async (username, password) => {
@@ -80,7 +86,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateFavorites }}>
       {children}
     </AuthContext.Provider>
   );

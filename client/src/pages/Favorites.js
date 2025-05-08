@@ -42,7 +42,7 @@ const Favorites = () => {
 
   const handleFavoriteBlog = (blogId, updatedFavorites) => {
     console.log('Updating favorites for blog ID:', blogId);
-    setBlogs(updatedFavorites);
+    setBlogs(updatedFavorites); // Update local blogs state
   };
 
   return (

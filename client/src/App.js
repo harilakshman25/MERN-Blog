@@ -1,15 +1,20 @@
 import React, { useContext } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import Home from './pages/Home';
 import MyBlogs from './pages/MyBlogs';
 import Favorites from './pages/Favorites';
-import Login from './components/Login';
-import Register from './components/Register';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import './App.css';
 
 const App = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate=useNavigate();
+  const handlelogout=()=>{
+    logout();
+    navigate('/');
+};
 
   return (
     <div>
@@ -46,7 +51,7 @@ const App = () => {
             <ul className="navbar-nav">
               {user ? (
                 <li className="nav-item">
-                  <button className="nav-link btn btn-link" onClick={logout}>
+                  <button className="nav-link btn btn-link" onClick={handlelogout}>
                     Logout
                   </button>
                 </li>
@@ -69,8 +74,8 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/myblogs" element={<MyBlogs />} />
           <Route path="/favorites" element={<Favorites />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </div>
     </div>

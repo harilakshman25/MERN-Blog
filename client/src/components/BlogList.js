@@ -10,7 +10,7 @@ const BlogList = ({
   handleLikeBlog,
   handleFavoriteBlog,
 }) => {
-  const { user } = useContext(AuthContext);
+  const { user, updateFavorites } = useContext(AuthContext);
   const [error, setError] = useState(null);
 
   const handleLike = async (blogId) => {
@@ -46,6 +46,7 @@ const BlogList = ({
         {},
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
+      updateFavorites(response.data); // Sync user.favorites
       handleFavoriteBlog(blogId, response.data);
     } catch (error) {
       console.error('Error favoriting blog:', error.response?.data || error.message);
@@ -78,20 +79,20 @@ const BlogList = ({
               <button
                 onClick={() => handleLike(blog._id)}
                 disabled={!user || !user.token}
-                className={`btn ${user && blog.likes?.some((like) => like._id === user.id) ? 'btn-outline-danger' : 'btn-outline-primary'} me-2`}
+                className={`btn ${user && blog.likes?.some((like) => like._id=== user.id) ? 'btn-outline-danger' : 'btn-outline-primary'} me-2`}
                 title={!user ? 'Login to like' : ''}
               >
                 <i className={`fa${user && blog.likes?.some((like) => like._id === user.id) ? 's' : 'r'} fa-heart me-1`}></i>
-                {user && blog.likes?.some((like) => like._id=== user.id) ? 'Unlike' : 'Like'}
+                {user && blog.likes?.some((like) => like._id === user.id) ? 'Unlike' : 'Like'}
               </button>
               <button
                 onClick={() => handleFavorite(blog._id)}
                 disabled={!user || !user.token}
-                className={`btn ${user && user.favorites?.some(id => id === blog._id) ? 'btn-outline-warning' : 'btn-outline-secondary'} me-2`}
+                className={`btn ${user && user.favorites?.some(id => id=== blog._id) ? 'btn-outline-warning' : 'btn-outline-secondary'} me-2`}
                 title={!user ? 'Login to favorite' : ''}
               >
                 <i className={`fa${user && user.favorites?.some(id => id === blog._id) ? 's' : 'r'} fa-star me-1`}></i>
-                {user && user.favorites?.some(id => id=== blog._id) ? 'Unfavorite' : 'Favorite'}
+                {user && user.favorites?.some(id => id === blog._id) ? 'Unfavorite' : 'Favorite'}
               </button>
               {showActions && user && blog.author?._id === user.id && (
                 <>
