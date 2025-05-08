@@ -21,6 +21,7 @@ const Home = () => {
   }, []);
 
   const handleLikeBlog = (blogId, updatedBlog) => {
+    console.log('Updating blog with ID:', blogId, 'to:', updatedBlog);
     setBlogs(
       blogs.map((blog) =>
         blog._id === blogId ? updatedBlog : blog
@@ -30,8 +31,8 @@ const Home = () => {
 
   return (
     <div>
-      <h1>All Blogs</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <h1 className="mb-4">All Blogs</h1>
+      {error && <div className="alert alert-danger">{error}</div>}
       <BlogList blogs={blogs} showActions={false} handleLikeBlog={handleLikeBlog} />
     </div>
   );

@@ -60,6 +60,7 @@ const MyBlogs = () => {
   };
 
   const handleLikeBlog = (blogId, updatedBlog) => {
+    console.log('Updating blog with ID:', blogId, 'to:', updatedBlog);
     setBlogs(
       blogs.map((blog) =>
         blog._id === blogId ? updatedBlog : blog
@@ -73,8 +74,8 @@ const MyBlogs = () => {
 
   return (
     <div>
-      <h1>My Blogs</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <h1 className="mb-4">My Blogs</h1>
+      {error && <div className="alert alert-danger">{error}</div>}
       <BlogForm addBlog={addBlog} updateBlog={updateBlog} editingBlog={editingBlog} />
       <BlogList
         blogs={blogs}
