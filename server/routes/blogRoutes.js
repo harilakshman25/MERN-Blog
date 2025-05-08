@@ -8,6 +8,7 @@ router.get('/myblogs',protect,blogController.getUserBlogs);
 router.post('/',protect,blogController.createBlog);
 router.put('/:id',protect,blogController.updateBlog);
 router.delete('/:id',protect,blogController.deleteBlog);
+router.post('/:id/like',protect,blogController.likeblog);
 
 module.exports=router;
 

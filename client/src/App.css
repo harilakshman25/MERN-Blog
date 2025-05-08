@@ -1,18 +1,35 @@
 .App {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  nav {
-    margin-bottom: 20px;
-  }
-  
-  nav a {
-    margin-right: 10px;
-    text-decoration: none;
-  }
-  
-  nav button {
-    padding: 5px 10px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+nav {
+  margin-bottom: 20px;
+}
+
+nav a {
+  margin-right: 10px;
+  text-decoration: none;
+}
+
+nav button {
+  padding: 5px 10px;
+}
+
+.blog {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+.blog button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.blog button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }

@@ -59,6 +59,14 @@ const MyBlogs = () => {
     }
   };
 
+  const handleLikeBlog = (blogId, updatedBlog) => {
+    setBlogs(
+      blogs.map((blog) =>
+        blog._id === blogId ? updatedBlog : blog
+      )
+    );
+  };
+
   const startEditing = (blog) => {
     setEditingBlog(blog);
   };
@@ -66,13 +74,14 @@ const MyBlogs = () => {
   return (
     <div>
       <h1>My Blogs</h1>
-      {error && <p>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <BlogForm addBlog={addBlog} updateBlog={updateBlog} editingBlog={editingBlog} />
       <BlogList
         blogs={blogs}
         deleteBlog={deleteBlog}
         startEditing={startEditing}
         showActions={true}
+        handleLikeBlog={handleLikeBlog}
       />
     </div>
   );

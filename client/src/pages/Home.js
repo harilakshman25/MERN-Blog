@@ -20,11 +20,19 @@ const Home = () => {
     fetchBlogs();
   }, []);
 
+  const handleLikeBlog = (blogId, updatedBlog) => {
+    setBlogs(
+      blogs.map((blog) =>
+        blog._id === blogId ? updatedBlog : blog
+      )
+    );
+  };
+
   return (
     <div>
       <h1>All Blogs</h1>
-      {error && <p>{error}</p>}
-      <BlogList blogs={blogs} showActions={false} />
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <BlogList blogs={blogs} showActions={false} handleLikeBlog={handleLikeBlog} />
     </div>
   );
 };
