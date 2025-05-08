@@ -2,12 +2,19 @@ import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 
-const BlogList = ({ blogs = [], deleteBlog, startEditing, showActions = true, handleLikeBlog }) => {
+const BlogList = ({
+  blogs = [],
+  deleteBlog,
+  startEditing,
+  showActions = true,
+  handleLikeBlog,
+  handleFavoriteBlog,
+}) => {
   const { user } = useContext(AuthContext);
   const [error, setError] = useState(null);
 
   const handleLike = async (blogId) => {
-    if (!user) {
+    if (!user || !user.token) {
       setError('Please log in to like a blog');
       return;
     }
@@ -23,6 +30,26 @@ const BlogList = ({ blogs = [], deleteBlog, startEditing, showActions = true, ha
     } catch (error) {
       console.error('Error liking blog:', error.response?.data || error.message);
       setError(error.response?.data?.message || 'Failed to like blog');
+    }
+  };
+
+  const handleFavorite = async (blogId) => {
+    if (!user || !user.token) {
+      setError('Please log in to favorite a blog');
+      return;
+    }
+    try {
+      setError(null);
+      console.log('Sending POST to:', `${process.env.REACT_APP_API_URL}/users/favorites/${blogId}`);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/users/favorites/${blogId}`,
+        {},
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      handleFavoriteBlog(blogId, response.data);
+    } catch (error) {
+      console.error('Error favoriting blog:', error.response?.data || error.message);
+      setError(error.response?.data?.message || 'Failed to favorite blog');
     }
   };
 
@@ -50,14 +77,23 @@ const BlogList = ({ blogs = [], deleteBlog, startEditing, showActions = true, ha
               </p>
               <button
                 onClick={() => handleLike(blog._id)}
-                disabled={!user}
-                className={`btn ${user && blog.likes?.some((like) => like._id.toString() === user.id) ? 'btn-outline-danger' : 'btn-outline-primary'} me-2`}
+                disabled={!user || !user.token}
+                className={`btn ${user && blog.likes?.some((like) => like._id === user.id) ? 'btn-outline-danger' : 'btn-outline-primary'} me-2`}
                 title={!user ? 'Login to like' : ''}
               >
-                <i className={`fa${user && blog.likes?.some((like) => like._id.toString() === user.id) ? 's' : 'r'} fa-heart me-1`}></i>
-                {user && blog.likes?.some((like) => like._id.toString() === user.id) ? 'Unlike' : 'Like'}
+                <i className={`fa${user && blog.likes?.some((like) => like._id === user.id) ? 's' : 'r'} fa-heart me-1`}></i>
+                {user && blog.likes?.some((like) => like._id=== user.id) ? 'Unlike' : 'Like'}
               </button>
-              {showActions && user && blog.author?._id.toString() === user.id && (
+              <button
+                onClick={() => handleFavorite(blog._id)}
+                disabled={!user || !user.token}
+                className={`btn ${user && user.favorites?.some(id => id === blog._id) ? 'btn-outline-warning' : 'btn-outline-secondary'} me-2`}
+                title={!user ? 'Login to favorite' : ''}
+              >
+                <i className={`fa${user && user.favorites?.some(id => id === blog._id) ? 's' : 'r'} fa-star me-1`}></i>
+                {user && user.favorites?.some(id => id=== blog._id) ? 'Unfavorite' : 'Favorite'}
+              </button>
+              {showActions && user && blog.author?._id === user.id && (
                 <>
                   <button
                     onClick={() => startEditing(blog)}

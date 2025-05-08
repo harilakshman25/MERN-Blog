@@ -1,63 +1,86 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const decoded = jwtDecode(token);
-      setUser({ token, id: decoded.id });
+      try {
+        const decoded = jwtDecode(token);
+        setUser({ ...decoded.user, token, favorites: [] });
+        fetchUserFavorites(token);
+      } catch (error) {
+        console.error('Invalid token:', error);
+        localStorage.removeItem('token');
+        setUser(null);
+      }
     }
-    setLoading(false);
   }, []);
+
+  const fetchUserFavorites = async (token) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/users/favorites`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setUser((prev) => ({
+        ...prev,
+        favorites: response.data.map((blog) => blog._id),
+      }));
+    } catch (error) {
+      console.error('Error fetching favorites:', error.response?.data || error.message);
+      // Don't clear user, just log error
+    }
+  };
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
-        { username, password }
-      );
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/login`, {
+        username,
+        password,
+      });
       const { token } = response.data;
       localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const decoded = jwtDecode(token);
-      setUser({ token, id: decoded.id });
+      const newUser = { ...decoded.user, token, favorites: [] };
+      setUser(newUser);
+      await fetchUserFavorites(token);
+      return newUser;
     } catch (error) {
-      throw error.response.data.message;
+      throw error.response?.data?.message || 'Login failed';
     }
   };
 
   const register = async (username, password) => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/register`,
-        { username, password }
-      );
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/register`, {
+        username,
+        password,
+      });
       const { token } = response.data;
       localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const decoded = jwtDecode(token);
-      setUser({ token, id: decoded.id });
+      const newUser = { ...decoded.user, token, favorites: [] };
+      setUser(newUser);
+      await fetchUserFavorites(token);
+      return newUser;
     } catch (error) {
-      throw error.response.data.message;
+      throw error.response?.data?.message || 'Registration failed';
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

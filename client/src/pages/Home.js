@@ -29,11 +29,21 @@ const Home = () => {
     );
   };
 
+  const handleFavoriteBlog = (blogId, updatedFavorites) => {
+    console.log('Favorites updated:', updatedFavorites);
+    // No state update needed for Home, handled by AuthContext
+  };
+
   return (
     <div>
       <h1 className="mb-4">All Blogs</h1>
       {error && <div className="alert alert-danger">{error}</div>}
-      <BlogList blogs={blogs} showActions={false} handleLikeBlog={handleLikeBlog} />
+      <BlogList
+        blogs={blogs}
+        showActions={false}
+        handleLikeBlog={handleLikeBlog}
+        handleFavoriteBlog={handleFavoriteBlog}
+      />
     </div>
   );
 };

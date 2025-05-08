@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import Home from './pages/Home';
 import MyBlogs from './pages/MyBlogs';
+import Favorites from './pages/Favorites';
 import Login from './components/Login';
 import Register from './components/Register';
 import './App.css';
@@ -32,9 +33,14 @@ const App = () => {
                 <Link className="nav-link" to="/">Home</Link>
               </li>
               {user && (
-                <li className="nav-item">
-                  <Link className="nav-link" to="/myblogs">My Blogs</Link>
-                </li>
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/myblogs">My Blogs</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/favorites">My Favorites</Link>
+                  </li>
+                </>
               )}
             </ul>
             <ul className="navbar-nav">
@@ -62,6 +68,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/myblogs" element={<MyBlogs />} />
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
